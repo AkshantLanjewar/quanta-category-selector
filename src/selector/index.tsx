@@ -2,11 +2,12 @@ import { MantineProvider } from '@mantine/core'
 import React, { useEffect } from 'react'
 import SelectorTabs from './tabs'
 import './index.scss'
-import { ISchemaItem, usePingMessage, useSetSchema } from 'quanta-selector-react'
+import { ISchemaItem, usePingMessage, useSetSchema, useSetSelected } from 'quanta-selector-react'
 
 const CategorySelector: React.FC = ({ }) => {
     const pingMessage = usePingMessage()
     const setSchema = useSetSchema()
+    const setSelected = useSetSelected()
     
     useEffect(() => {
         pingMessage("monitor")
@@ -19,6 +20,7 @@ const CategorySelector: React.FC = ({ }) => {
         ] as ISchemaItem[]
 
         setSchema("indicator_selector_schema", schema)
+        setSelected("indicator_selector_schema", undefined)
     }, [])
 
     return (
@@ -29,7 +31,7 @@ const CategorySelector: React.FC = ({ }) => {
                 withNormalizeCSS
                 withCSSVariables
             >
-                <div id="monitor" style={{ width: "fit-content", height: "100%", background: "#101113" }}>
+                <div id="monitor" style={{ height: "100%", background: "#101113" }}>
                     <SelectorTabs />
                 </div>
             </MantineProvider>
