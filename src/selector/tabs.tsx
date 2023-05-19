@@ -2,21 +2,25 @@ import React, { useEffect, useState } from 'react'
 import './tabs.scss'
 import { Tabs } from '@mantine/core'
 import Pager from './pager'
-import { useAnalysis } from 'quanta-selector-react'
+import { useAnalysis, useAnalysisUpdated } from 'quanta-selector-framework'
 
 const SelectorTabs: React.FC = ({ }) => {
     const [categories, setCategories] = useState<string[] | undefined>(undefined)
+
     const analysis = useAnalysis()
+    const analysisUpdated = useAnalysisUpdated()
 
     async function analyze() {
+        console.log(analysis)
         if(analysis === null)
             return
 
-        let analysisKeys = Object.keys(analysis)
+        let internalAnalysis = JSON.parse(JSON.stringify(analysis))
+        let analysisKeys = Object.keys(internalAnalysis)
         if(analysisKeys.includes('category') === false)
             return
 
-        let object = analysis['category']
+        let object = internalAnalysis['category']
         let categoryArray = object.stringArray
         if(categoryArray === undefined)
             categoryArray = [] as string[]
@@ -26,8 +30,9 @@ const SelectorTabs: React.FC = ({ }) => {
     }
 
     useEffect(() => {
+        console.debug('Building Tabs')
         analyze()
-    }, [analysis])
+    }, [analysisUpdated])
 
     return (
         <div className={"tabs__wrapper"}>

@@ -4051,10 +4051,10 @@ process@^0.11.10:
   resolved "https://registry.yarnpkg.com/process/-/process-0.11.10.tgz#7332300e840161bda3e69a1d1d91a7d4bc16f182"
   integrity sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A==
 
-quanta-selector-react@1.2.2:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/quanta-selector-react/-/quanta-selector-react-1.2.2.tgz#dd4b5f4d72e5d95fdbdbfa2110cb3ef5738874d1"
-  integrity sha512-yI3jsM9b8fOpyhmwZJ40WZgkwnGvf9N0E0v/kFPyQSZJM1kRgmqkAcnwbiTkYoHJ9KOScBoHYvhtnAC+eI3WjQ==
+quanta-selector-framework@*:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/quanta-selector-framework/-/quanta-selector-framework-1.0.0.tgz#8162fa31913459719e20cdae055757f2ac43354d"
+  integrity sha512-exxQ8QA4B0l77qVaTaUpTx/0tWu3iFP45l72NZHrn7Lnyywhs7VRM2T8iA+EY7qvyxem6Taamqu2X9WXmcdTZw==
   dependencies:
     "@types/uuid" "^9.0.1"
     uuid "^9.0.0"

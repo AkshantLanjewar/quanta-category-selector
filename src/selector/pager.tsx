@@ -1,7 +1,8 @@
 import { Stack, Pagination, SimpleGrid } from '@mantine/core'
 import React, { useEffect, useState } from 'react'
 import IndicatorCard from './indicator-card'
-import { IQuantaIndicator, IQuantaQuery, useAnalysis, useIndicatorsLength, useIndicatorsPaged } from 'quanta-selector-react'
+import { IQuantaIndicator, IQuantaQuery, useAnalysis, useIndicatorsLength, useIndicatorsPaged, useAnalysisUpdated } from 'quanta-selector-framework'
+import { usePrevious } from '@mantine/hooks'
 
 const PAGE_LENGTH = 20
 const QUERY_MONITOR = 400
@@ -17,6 +18,8 @@ const Pager: React.FC<IPagerProps> = ({ category }) => {
     const [indicators, setIndicators] = useState<IQuantaIndicator[]>([])
 
     const analysis = useAnalysis()
+    const analysisUpdated = useAnalysisUpdated()
+
     const indicatorsLength = useIndicatorsLength()
     const queryIndicatorsPage = useIndicatorsPaged()
     
@@ -79,8 +82,9 @@ const Pager: React.FC<IPagerProps> = ({ category }) => {
     }
 
     useEffect(() => {
+        console.debug('Building Pane')
         request()
-    }, [analysis])
+    }, [analysisUpdated])
 
     async function fetchPage() {
         if(pageLength === undefined || page === undefined)

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import './indicator-card.scss'
 import { TinyArea } from '@ant-design/plots'
 import { config } from './chart-config'
-import { IChartData, IQuantaIndicator } from 'quanta-selector-react'
+import { IChartData, IQuantaIndicator } from 'quanta-selector-framework'
 
 interface IANTParsedChartData {
     date: string,

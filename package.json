@@ -18,7 +18,7 @@
     "@mantine/hooks": "^5.9.5",
     "@types/react": "^18.2.0",
     "parcel": "*",
-    "quanta-selector-react": "1.2.9",
+    "quanta-selector-framework": "1.0.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-remove-scroll": "^2.5.5",

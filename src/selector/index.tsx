@@ -2,7 +2,7 @@ import { MantineProvider } from '@mantine/core'
 import React, { useEffect } from 'react'
 import SelectorTabs from './tabs'
 import './index.scss'
-import { ISchemaItem, usePingMessage, useSetSchema, useSetSelected } from 'quanta-selector-react'
+import { ISchemaItem, usePingMessage, useSetSchema, useSetSelected } from 'quanta-selector-framework'
 
 const CategorySelector: React.FC = ({ }) => {
     const pingMessage = usePingMessage()
