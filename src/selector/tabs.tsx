@@ -11,7 +11,6 @@ const SelectorTabs: React.FC = ({ }) => {
     const analysisUpdated = useAnalysisUpdated()
 
     async function analyze() {
-        console.log(analysis)
         if(analysis === null)
             return
 
@@ -30,7 +29,6 @@ const SelectorTabs: React.FC = ({ }) => {
     }
 
     useEffect(() => {
-        console.debug('Building Tabs')
         analyze()
     }, [analysisUpdated])
 

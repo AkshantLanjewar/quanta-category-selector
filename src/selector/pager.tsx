@@ -6,6 +6,7 @@ import { usePrevious } from '@mantine/hooks'
 
 const PAGE_LENGTH = 20
 const QUERY_MONITOR = 400
+const QUERY_ALL = 420
 
 interface IPagerProps {
     category: string
@@ -39,11 +40,11 @@ const Pager: React.FC<IPagerProps> = ({ category }) => {
                 queryKeysList.push(key)
         }
 
-        let query: IQuantaQuery[] | undefined = undefined
+        let nQuery: IQuantaQuery[] | number | undefined = QUERY_MONITOR
         if(category !== 'All') {
-            query = []
+            nQuery = []
             //add the category
-            query.push({
+            nQuery.push({
                 fieldKey: "category", // reserved field keyword
                 fieldType: "string",
                 stringField: category
@@ -60,29 +61,30 @@ const Pager: React.FC<IPagerProps> = ({ category }) => {
                 if(field.isArray === true)
                     continue
 
-                query.push({
+                    nQuery.push({
                     fieldKey: keySplit[1],
                     fieldType: field.objectType,
                     stringField: field.stringValue,
                     dateField: field.dateValue
                 })
             }
+        } else {
+            nQuery = undefined
         }
 
         //get the amount of indicators
-        const indicatorTotal = await indicatorsLength(query)
+        const indicatorTotal = await indicatorsLength(nQuery)
         if(indicatorTotal === undefined)
             return
 
         let nTotalPages = Math.ceil(indicatorTotal / PAGE_LENGTH)
 
+        setQuery(nQuery)
         setPageLength(nTotalPages)
         setPage(0)
-        setQuery(query)
     }
 
     useEffect(() => {
-        console.debug('Building Pane')
         request()
     }, [analysisUpdated])
 
@@ -95,6 +97,7 @@ const Pager: React.FC<IPagerProps> = ({ category }) => {
         //get the active page
         setIndicators([])
         let indicators = await queryIndicatorsPage(page, PAGE_LENGTH, query)
+        console.log(indicators)
         if(indicators === undefined)
             return
 
@@ -106,7 +109,7 @@ const Pager: React.FC<IPagerProps> = ({ category }) => {
     }, [page])
     
     return (
-        <Stack justify={'center'}>
+        <Stack justify={'center'} sx={{ minHeight: 100 }}>
             <SimpleGrid cols={5}>
                 {indicators.map((step) => (
                     <IndicatorCard indicator={step} />
