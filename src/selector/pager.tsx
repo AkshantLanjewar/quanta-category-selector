@@ -9,10 +9,20 @@ const QUERY_MONITOR = 400
 const QUERY_ALL = 420
 
 interface IPagerProps {
-    category: string
+    category: string,
+    setIndicatorCallback: (indicatorId: string) => void,
+    activeIndicator: string | undefined,
+    addIndicatorBlockCallback: (indicatorBlock: IQuantaIndicator[]) => void,
+    allIndicators: IQuantaIndicator[]
 }
 
-const Pager: React.FC<IPagerProps> = ({ category }) => {
+const Pager: React.FC<IPagerProps> = ({ 
+    category, 
+    setIndicatorCallback, 
+    activeIndicator, 
+    addIndicatorBlockCallback,
+    allIndicators 
+}) => {
     const [page, setPage] = useState<number | undefined>(undefined)
     const [pageLength, setPageLength] = useState<number | undefined>(undefined)
     const [query, setQuery] = useState<IQuantaQuery[] | undefined | number>(QUERY_MONITOR)
@@ -23,6 +33,16 @@ const Pager: React.FC<IPagerProps> = ({ category }) => {
 
     const indicatorsLength = useIndicatorsLength()
     const queryIndicatorsPage = useIndicatorsPaged()
+
+    useEffect(() => {
+        let page_length = Math.ceil(allIndicators.length / PAGE_LENGTH)
+        if(category !== 'All')
+            return
+        
+        setPageLength(page_length)
+        setPage(0)
+        setIndicators([ ...allIndicators ])
+    }, [allIndicators])
     
     async function request() {
         if(analysis === null)
@@ -54,7 +74,7 @@ const Pager: React.FC<IPagerProps> = ({ category }) => {
             for(let i = 0; i < queryKeysList.length; i++) {
                 let queryKey = queryKeysList[i]
                 let keySplit = queryKey.split('::')
-                if(keySplit.length < 2)
+                if(keySplit.length < 2 || keySplit[0] !== 'query')
                     continue
 
                 let field = analysis[queryKey]
@@ -77,6 +97,7 @@ const Pager: React.FC<IPagerProps> = ({ category }) => {
         if(indicatorTotal === undefined)
             return
 
+        console.log(`page length -> ${indicatorTotal}`)
         let nTotalPages = Math.ceil(indicatorTotal / PAGE_LENGTH)
 
         setQuery(nQuery)
@@ -91,42 +112,53 @@ const Pager: React.FC<IPagerProps> = ({ category }) => {
     async function fetchPage() {
         if(pageLength === undefined || page === undefined)
             return
-        if(query === QUERY_MONITOR || typeof query === 'number')
+        if(query === QUERY_MONITOR || typeof query === 'number' || pageLength === 0)
             return
         
         //get the active page
         setIndicators([])
         let indicators = await queryIndicatorsPage(page, PAGE_LENGTH, query)
-        console.log(indicators)
         if(indicators === undefined)
             return
 
+        console.debug(indicators)
         setIndicators([ ...indicators ])
+
+        //add the indicators to the all page
+        addIndicatorBlockCallback(indicators)
     }
 
     useEffect(() => {
         fetchPage()
     }, [page])
+
+    let paginationComponent = undefined
+    if(pageLength !== undefined && page !== undefined)
+        paginationComponent = (
+            <Pagination
+                total={pageLength}
+                page={page + 1}
+                onChange={(page) => setPage(page - 1)}
+                size={"md"}
+                radius={"xl"}
+                pt={'md'}
+                sx={{ justifyContent: 'center' }}
+            />
+        )
     
     return (
         <Stack justify={'center'} sx={{ minHeight: 100 }}>
-            <SimpleGrid cols={5}>
+            <SimpleGrid cols={5} sx={{ paddingLeft: 10, paddingRight: 10 }}>
                 {indicators.map((step) => (
-                    <IndicatorCard indicator={step} />
+                    <IndicatorCard 
+                        indicator={step} 
+                        setIndicatorCallback={setIndicatorCallback}
+                        activeIndicator={activeIndicator}
+                    />
                 ))}
             </SimpleGrid>
 
-            {pageLength && page && (
-                <Pagination
-                    total={pageLength}
-                    page={page + 1}
-                    onChange={(page) => setPage(page - 1)}
-                    size={"md"}
-                    radius={"xl"}
-                    pt={'md'}
-                    sx={{ justifyContent: 'center' }}
-                />
-            )}
+            {paginationComponent}
         </Stack>
     )
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import './indicator-card.scss'
 import { TinyArea } from '@ant-design/plots'
 import { config } from './chart-config'
-import { IChartData, IQuantaIndicator } from 'quanta-selector-framework'
+import { IChartData, IQuantaIndicator, useFormatString } from 'quanta-selector-framework'
 
 interface IANTParsedChartData {
     date: string,
@@ -10,7 +10,9 @@ interface IANTParsedChartData {
 }
 
 interface IIndicatorCardProps {
-    indicator: IQuantaIndicator
+    indicator: IQuantaIndicator,
+    setIndicatorCallback: (indicatorId: string) => void,
+    activeIndicator: string | undefined
 }
 
 function getMonthShortName(monthNo: number) {
@@ -47,8 +49,12 @@ function convertQuantaChartDataAnt(data: IChartData[]) {
     return convertedData
 }
 
-const IndicatorCard: React.FC<IIndicatorCardProps> = ({ indicator }) => {
+const IndicatorCard: React.FC<IIndicatorCardProps> = ({ indicator, setIndicatorCallback, activeIndicator }) => {
     const [settings, setSettings] = useState(config)
+    const [title, setTitle] = useState<string | undefined>(undefined)
+    const [short, setShort] = useState<string | undefined>(undefined)
+
+    const formatter = useFormatString()
 
     useEffect(() => {
         let chartData = indicator.chartData
@@ -68,22 +74,35 @@ const IndicatorCard: React.FC<IIndicatorCardProps> = ({ indicator }) => {
             return `Value ${value}`
         }
 
+        setTitle(formatter("title", indicator))
+        setShort(formatter("short", indicator))
         setSettings({ ...nSettings })
     }, [indicator])
 
+    const onClick = (e: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+        if(indicator.indicatorId === undefined)
+            return
+
+        e.stopPropagation()
+        setIndicatorCallback(indicator.indicatorId)
+    }
+
     return (
-        <div className="indicator__card">
+        <div 
+            className={`indicator__card ${indicator.indicatorId === activeIndicator && 'active'}`}
+            onClick={onClick}
+        >
             <div className="indicator__chart">
                 <TinyArea {...settings} />
             </div>
 
             <div className="indicator__title">
                 <div className="name">
-                    This is the title
+                    {title}
                 </div>
 
                 <div className="indicator__id">
-                    am10::32
+                    {short}
                 </div>
             </div>
         </div>

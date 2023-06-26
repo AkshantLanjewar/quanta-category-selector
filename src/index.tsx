@@ -5,12 +5,12 @@ import CategorySelector from "./selector"
 
 const App: React.FC = ({ }) => {
     return (
-        <>
+        <div style={{ minWidth: 500 }}>
             <SelectorWrapper>
                 <CategorySelector />
             </SelectorWrapper>
-        </>
+        </div>
     )
 }
 
-render(<App />, document.getElementById("app"))
+render(<App />, document.getElementById("root"))

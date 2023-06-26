@@ -2,13 +2,20 @@ $dark-8: var(--mantine-color-dark-8);
 $dark-7: var(--mantine-color-dark-7);
 $dark-6: var(--mantine-color-dark-6);
 $dark-2: var(--mantine-color-dark-2);
+$dark-9: var(--mantine-color-dark-9);
+$indigo-7: var(--mantine-color-indigo-7);
 
 .indicator__card {
     display: flex;
     flex-direction: column;
     width: 250px;
     border-radius: 8px;
-    background-color: black;
+    background-color: $dark-9;
+    border: 2px solid $dark-9;
+
+    &.active {
+        border: 2px solid $indigo-7;
+    }
 
     .indicator__chart {
         width: 100%;
@@ -20,7 +27,7 @@ $dark-2: var(--mantine-color-dark-2);
     }
 
     .indicator__title {
-        height: 80px;
+        height: 100px;
         padding: 12px 16px;
         background-color: $dark-6;
         gap: 0px;
@@ -37,7 +44,7 @@ $dark-2: var(--mantine-color-dark-2);
             font-size: 16px;
             color: #FFFFFF;
 
-            max-height: 50px;
+            max-height: 60px;
             line-height: 25px;
             -webkit-line-clamp: 2;
             overflow: hidden;

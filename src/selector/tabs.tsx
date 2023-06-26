@@ -1,14 +1,33 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import './tabs.scss'
 import { Tabs } from '@mantine/core'
 import Pager from './pager'
-import { useAnalysis, useAnalysisUpdated } from 'quanta-selector-framework'
+import { IQuantaIndicator, useAnalysis, useAnalysisUpdated, useSetSelected } from 'quanta-selector-framework'
 
 const SelectorTabs: React.FC = ({ }) => {
     const [categories, setCategories] = useState<string[] | undefined>(undefined)
+    const [activeIndicator, setActiveIndicator] = useState<string | undefined>(undefined)
+    const [allIndicators, setAllIndicators] = useState<IQuantaIndicator[]>([])
 
     const analysis = useAnalysis()
     const analysisUpdated = useAnalysisUpdated()
+    const setSelected = useSetSelected()
+
+    const setIndicatorCallback = useCallback((indicatorId: string) => {
+        let selectedObject = {
+            indicator_id: indicatorId
+        }
+        
+        setSelected("indicator_selector_schema", selectedObject)
+        setActiveIndicator(indicatorId)
+    }, [])
+
+    const addIndicatorBlockCallback = useCallback((indicatorBlock: IQuantaIndicator[]) => {
+        let oldIndicators = allIndicators
+        let newIndicators = [ ...oldIndicators, ...indicatorBlock ]
+
+        setAllIndicators([ ...newIndicators ])
+    }, [allIndicators])
 
     async function analyze() {
         if(analysis === null)
@@ -32,6 +51,10 @@ const SelectorTabs: React.FC = ({ }) => {
         analyze()
     }, [analysisUpdated])
 
+    const wrapperClicked = () => {
+        setActiveIndicator(undefined)
+    }
+
     return (
         <div className={"tabs__wrapper"}>
             <Tabs
@@ -51,8 +74,15 @@ const SelectorTabs: React.FC = ({ }) => {
                     <Tabs.Panel
                         value={step.toLowerCase()}
                         pt={"md"}
+                        onClick={wrapperClicked}
                     >
-                        <Pager category={step} />
+                        <Pager 
+                            category={step} 
+                            setIndicatorCallback={setIndicatorCallback}
+                            activeIndicator={activeIndicator}
+                            addIndicatorBlockCallback={addIndicatorBlockCallback}
+                            allIndicators={allIndicators}
+                        />
                     </Tabs.Panel>
                 ))}
             </Tabs>
