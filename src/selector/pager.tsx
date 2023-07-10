@@ -3,12 +3,14 @@ import React, { useEffect, useState } from 'react'
 import IndicatorCard from './indicator-card'
 import { IQuantaIndicator, IQuantaQuery, useAnalysis, useIndicatorsLength, useIndicatorsPaged, useAnalysisUpdated } from 'quanta-selector-framework'
 import { usePrevious } from '@mantine/hooks'
+import { IDims } from '..'
 
 const PAGE_LENGTH = 20
 const QUERY_MONITOR = 400
 const QUERY_ALL = 420
 
 interface IPagerProps {
+    dims: IDims | undefined,
     category: string,
     setIndicatorCallback: (indicatorId: string) => void,
     activeIndicator: string | undefined,
@@ -17,6 +19,7 @@ interface IPagerProps {
 }
 
 const Pager: React.FC<IPagerProps> = ({ 
+    dims,
     category, 
     setIndicatorCallback, 
     activeIndicator, 
@@ -27,6 +30,7 @@ const Pager: React.FC<IPagerProps> = ({
     const [pageLength, setPageLength] = useState<number | undefined>(undefined)
     const [query, setQuery] = useState<IQuantaQuery[] | undefined | number>(QUERY_MONITOR)
     const [indicators, setIndicators] = useState<IQuantaIndicator[]>([])
+    const [cols, setCols] = useState(0)
 
     const analysis = useAnalysis()
     const analysisUpdated = useAnalysisUpdated()
@@ -43,6 +47,15 @@ const Pager: React.FC<IPagerProps> = ({
         setPage(0)
         setIndicators([ ...allIndicators ])
     }, [allIndicators])
+
+    useEffect(() => {
+        if(dims === undefined)
+            return
+
+        let containerWidth = dims.width
+        let nCols = Math.round(containerWidth / 270)
+        setCols(nCols)
+    }, [dims])
     
     async function request() {
         if(analysis === null)
@@ -97,9 +110,7 @@ const Pager: React.FC<IPagerProps> = ({
         if(indicatorTotal === undefined)
             return
 
-        console.log(`page length -> ${indicatorTotal}`)
         let nTotalPages = Math.ceil(indicatorTotal / PAGE_LENGTH)
-
         setQuery(nQuery)
         setPageLength(nTotalPages)
         setPage(0)
@@ -121,9 +132,7 @@ const Pager: React.FC<IPagerProps> = ({
         if(indicators === undefined)
             return
 
-        console.debug(indicators)
         setIndicators([ ...indicators ])
-
         //add the indicators to the all page
         addIndicatorBlockCallback(indicators)
     }
@@ -148,14 +157,16 @@ const Pager: React.FC<IPagerProps> = ({
     
     return (
         <Stack justify={'center'} sx={{ minHeight: 100 }}>
-            <SimpleGrid cols={5} sx={{ paddingLeft: 10, paddingRight: 10 }}>
-                {indicators.map((step) => (
-                    <IndicatorCard 
-                        indicator={step} 
-                        setIndicatorCallback={setIndicatorCallback}
-                        activeIndicator={activeIndicator}
-                    />
-                ))}
+            <SimpleGrid cols={cols} sx={{ paddingLeft: 10, paddingRight: 10 }}>
+                {indicators.map((step) => {
+                    return (
+                        <IndicatorCard 
+                            indicator={step} 
+                            setIndicatorCallback={setIndicatorCallback}
+                            activeIndicator={activeIndicator}
+                        />
+                    )
+                })}
             </SimpleGrid>
 
             {paginationComponent}

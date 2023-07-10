@@ -3,8 +3,13 @@ import React, { useEffect } from 'react'
 import SelectorTabs from './tabs'
 import './index.scss'
 import { ISchemaItem, usePingMessage, useSetSchema, useSetSelected } from 'quanta-selector-framework'
+import { IDims } from '..'
 
-const CategorySelector: React.FC = ({ }) => {
+interface IProps {
+    dims: IDims | undefined
+}
+
+const CategorySelector: React.FC<IProps> = ({ dims }) => {
     const pingMessage = usePingMessage()
     const setSchema = useSetSchema()
     const setSelected = useSetSelected()
@@ -32,7 +37,7 @@ const CategorySelector: React.FC = ({ }) => {
                 withCSSVariables
             >
                 <div id="monitor" style={{ height: "100%", background: "#101113" }}>
-                    <SelectorTabs />
+                    <SelectorTabs dims={dims} />
                 </div>
             </MantineProvider>
         </>

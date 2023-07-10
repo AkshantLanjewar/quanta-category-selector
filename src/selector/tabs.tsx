@@ -3,8 +3,13 @@ import './tabs.scss'
 import { Tabs } from '@mantine/core'
 import Pager from './pager'
 import { IQuantaIndicator, useAnalysis, useAnalysisUpdated, useSetSelected } from 'quanta-selector-framework'
+import { IDims } from '..'
 
-const SelectorTabs: React.FC = ({ }) => {
+interface IProps {
+    dims: IDims | undefined
+}
+
+const SelectorTabs: React.FC<IProps> = ({ dims }) => {
     const [categories, setCategories] = useState<string[] | undefined>(undefined)
     const [activeIndicator, setActiveIndicator] = useState<string | undefined>(undefined)
     const [allIndicators, setAllIndicators] = useState<IQuantaIndicator[]>([])
@@ -61,6 +66,7 @@ const SelectorTabs: React.FC = ({ }) => {
                 variant='pills'
                 color='indigo'
                 defaultValue={'example'}
+                keepMounted={false}
             >
                 <Tabs.List style={{ justifyContent: "center" }}>
                     {categories && categories.map((step) => (
@@ -77,6 +83,7 @@ const SelectorTabs: React.FC = ({ }) => {
                         onClick={wrapperClicked}
                     >
                         <Pager 
+                            dims={dims}
                             category={step} 
                             setIndicatorCallback={setIndicatorCallback}
                             activeIndicator={activeIndicator}

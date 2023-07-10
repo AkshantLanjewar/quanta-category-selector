@@ -3,6 +3,7 @@ import './indicator-card.scss'
 import { TinyArea } from '@ant-design/plots'
 import { config } from './chart-config'
 import { IChartData, IQuantaIndicator, useFormatString } from 'quanta-selector-framework'
+import { Tooltip } from '@mantine/core'
 
 interface IANTParsedChartData {
     date: string,
@@ -43,14 +44,14 @@ function convertQuantaChartDataAnt(data: IChartData[]) {
         let date = new Date(timestamp)
         
         let dateString = `${getMonthShortName(date.getMonth())} ${date.getFullYear()}`
-        convertedData.push({ date: dateString, value: point.xValue! })
+        convertedData.push({ date: dateString, value: point.yValue! })
     }
 
     return convertedData
 }
 
 const IndicatorCard: React.FC<IIndicatorCardProps> = ({ indicator, setIndicatorCallback, activeIndicator }) => {
-    const [settings, setSettings] = useState(config)
+    const [settings, setSettings] = useState<any | undefined>(undefined)
     const [title, setTitle] = useState<string | undefined>(undefined)
     const [short, setShort] = useState<string | undefined>(undefined)
 
@@ -62,7 +63,7 @@ const IndicatorCard: React.FC<IIndicatorCardProps> = ({ indicator, setIndicatorC
             return
 
         let convertedData = convertQuantaChartDataAnt(chartData)
-        let nSettings = settings
+        let nSettings = config
 
         let antData = [] as number[]
         for(let i = 0; i < convertedData.length; i++)
@@ -93,17 +94,37 @@ const IndicatorCard: React.FC<IIndicatorCardProps> = ({ indicator, setIndicatorC
             onClick={onClick}
         >
             <div className="indicator__chart">
-                <TinyArea {...settings} />
+                {settings && (
+                    <TinyArea {...settings} />
+                )}
             </div>
 
             <div className="indicator__title">
-                <div className="name">
-                    {title}
-                </div>
+                <Tooltip
+                    openDelay={250}
+                    label={title}
+                    transition={"slide-up"}
+                    position={"bottom-start"}
+                    styles={{ tooltip: { backgroundColor: "#08090A" } }}
+                    withArrow
+                >
+                    <div className="name">
+                        {title}
+                    </div>
+                </Tooltip>
 
-                <div className="indicator__id">
-                    {short}
-                </div>
+                <Tooltip
+                    openDelay={250}
+                    label={short}
+                    transition={"slide-up"}
+                    position={"bottom-start"}
+                    styles={{ tooltip: { backgroundColor: "#08090A" } }}
+                    withArrow
+                >
+                    <div className="indicator__id">
+                        {short}
+                    </div>
+                </Tooltip>
             </div>
         </div>
     )
