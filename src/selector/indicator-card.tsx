@@ -12,6 +12,7 @@ interface IANTParsedChartData {
 
 interface IIndicatorCardProps {
     indicator: IQuantaIndicator,
+    index: number,
     setIndicatorCallback: (indicatorId: string) => void,
     activeIndicator: string | undefined
 }
@@ -50,7 +51,12 @@ function convertQuantaChartDataAnt(data: IChartData[]) {
     return convertedData
 }
 
-const IndicatorCard: React.FC<IIndicatorCardProps> = ({ indicator, setIndicatorCallback, activeIndicator }) => {
+const IndicatorCard: React.FC<IIndicatorCardProps> = ({ 
+    indicator, 
+    index, 
+    setIndicatorCallback, 
+    activeIndicator 
+}) => {
     const [settings, setSettings] = useState<any | undefined>(undefined)
     const [title, setTitle] = useState<string | undefined>(undefined)
     const [short, setShort] = useState<string | undefined>(undefined)
@@ -92,6 +98,7 @@ const IndicatorCard: React.FC<IIndicatorCardProps> = ({ indicator, setIndicatorC
         <div 
             className={`indicator__card ${indicator.indicatorId === activeIndicator && 'active'}`}
             onClick={onClick}
+            data-testId={`indicator-card-${index}`}
         >
             <div className="indicator__chart">
                 {settings && (

@@ -157,11 +157,16 @@ const Pager: React.FC<IPagerProps> = ({
     
     return (
         <Stack justify={'center'} sx={{ minHeight: 100 }}>
-            <SimpleGrid cols={cols} sx={{ paddingLeft: 10, paddingRight: 10 }}>
-                {indicators.map((step) => {
+            <SimpleGrid 
+                cols={cols} 
+                sx={{ paddingLeft: 10, paddingRight: 10 }}
+                data-testId={'indicator-cards'}
+            >
+                {indicators.map((step, i) => {
                     return (
                         <IndicatorCard 
                             indicator={step} 
+                            index={i}
                             setIndicatorCallback={setIndicatorCallback}
                             activeIndicator={activeIndicator}
                         />

@@ -68,9 +68,15 @@ const SelectorTabs: React.FC<IProps> = ({ dims }) => {
                 defaultValue={'example'}
                 keepMounted={false}
             >
-                <Tabs.List style={{ justifyContent: "center" }}>
+                <Tabs.List 
+                    style={{ justifyContent: "center" }}
+                    data-testId={'categories'}
+                >
                     {categories && categories.map((step) => (
-                        <Tabs.Tab value={step.toLowerCase()}>
+                        <Tabs.Tab 
+                            value={step.toLowerCase()}
+                            data-testId={`category-${step.toLowerCase()}`}
+                        >
                             {step}
                         </Tabs.Tab>
                     ))}
