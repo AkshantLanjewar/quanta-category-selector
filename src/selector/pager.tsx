@@ -56,67 +56,68 @@ const Pager: React.FC<IPagerProps> = ({
         let nCols = Math.round(containerWidth / 270)
         setCols(nCols)
     }, [dims])
-    
-    async function request() {
-        if(analysis === null)
-            return
-
-        let queryKeys = Object.keys(analysis)
-        let queryKeysList = [] as string[]
-        for(let i = 0; i < queryKeys.length; i++) {
-            let key = queryKeys[i]
-            let keySplit = key.split('::')
-
-            if(keySplit.length < 2)
-                continue
-            if(keySplit[0] === "query")
-                queryKeysList.push(key)
-        }
-
-        let nQuery: IQuantaQuery[] | number | undefined = QUERY_MONITOR
-        if(category !== 'All') {
-            nQuery = []
-            //add the category
-            nQuery.push({
-                fieldKey: "category", // reserved field keyword
-                fieldType: "string",
-                stringField: category
-            })
-
-            //add any previously selected objects to the query
-            for(let i = 0; i < queryKeysList.length; i++) {
-                let queryKey = queryKeysList[i]
-                let keySplit = queryKey.split('::')
-                if(keySplit.length < 2 || keySplit[0] !== 'query')
-                    continue
-
-                let field = analysis[queryKey]
-                if(field.isArray === true)
-                    continue
-
-                    nQuery.push({
-                    fieldKey: keySplit[1],
-                    fieldType: field.objectType,
-                    stringField: field.stringValue,
-                    dateField: field.dateValue
-                })
-            }
-        } else {
-            nQuery = undefined
-        }
-
-        //get the amount of indicators
-        const indicatorTotal = await indicatorsLength(nQuery)
-        if(indicatorTotal === undefined)
-            return
-
-        let nTotalPages = Math.ceil(indicatorTotal / PAGE_LENGTH)
-        setQuery(nQuery)
-        setPageLength(nTotalPages)
-        setPage(0)
-    }
 
     useEffect(() => {
+        async function request() {
+            if(analysis === null)
+                return
+    
+            let queryKeys = Object.keys(analysis)
+            let queryKeysList = [] as string[]
+            for(let i = 0; i < queryKeys.length; i++) {
+                let key = queryKeys[i]
+                let keySplit = key.split('::')
+    
+                if(keySplit.length < 2)
+                    continue
+                if(keySplit[0] === "query")
+                    queryKeysList.push(key)
+            }
+    
+            let nQuery: IQuantaQuery[] | number | undefined = QUERY_MONITOR
+            if(category !== 'All') {
+                nQuery = []
+                //add the category
+                nQuery.push({
+                    fieldKey: "category", // reserved field keyword
+                    fieldType: "string",
+                    stringField: category
+                })
+    
+                //add any previously selected objects to the query
+                for(let i = 0; i < queryKeysList.length; i++) {
+                    let queryKey = queryKeysList[i]
+                    let keySplit = queryKey.split('::')
+                    if(keySplit.length < 2 || keySplit[0] !== 'query')
+                        continue
+    
+                    let field = analysis[queryKey]
+                    if(field.isArray === true)
+                        continue
+    
+                        nQuery.push({
+                        fieldKey: keySplit[1],
+                        fieldType: field.objectType,
+                        stringField: field.stringValue,
+                        dateField: field.dateValue
+                    })
+                }
+            } else {
+                nQuery = undefined
+            }
+    
+            //get the amount of indicators
+            const indicatorTotal = await indicatorsLength(nQuery)
+            console.debug(nQuery)
+            if(indicatorTotal === undefined)
+                return
+    
+            let nTotalPages = Math.ceil(indicatorTotal / PAGE_LENGTH)
+            setQuery(nQuery)
+            setPageLength(nTotalPages)
+            setPage(0)
+        }
+
         request()
     }, [analysisUpdated])
 

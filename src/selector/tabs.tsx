@@ -10,7 +10,7 @@ interface IProps {
 }
 
 const SelectorTabs: React.FC<IProps> = ({ dims }) => {
-    const [categories, setCategories] = useState<string[] | undefined>(undefined)
+    const [categories, setCategories] = useState<string[]>([])
     const [activeIndicator, setActiveIndicator] = useState<string | undefined>(undefined)
     const [allIndicators, setAllIndicators] = useState<IQuantaIndicator[]>([])
 
@@ -72,7 +72,7 @@ const SelectorTabs: React.FC<IProps> = ({ dims }) => {
                     style={{ justifyContent: "center" }}
                     data-testId={'categories'}
                 >
-                    {categories && categories.map((step) => (
+                    {categories.map((step) => (
                         <Tabs.Tab 
                             value={step.toLowerCase()}
                             data-testId={`category-${step.toLowerCase()}`}
@@ -82,7 +82,7 @@ const SelectorTabs: React.FC<IProps> = ({ dims }) => {
                     ))}
                 </Tabs.List>
 
-                {categories && categories.map((step) => (
+                {categories.map((step) => (
                     <Tabs.Panel
                         value={step.toLowerCase()}
                         pt={"md"}
